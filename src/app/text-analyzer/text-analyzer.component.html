@@ -1,0 +1,32 @@
+<div>
+  <h1>Text Analyzer</h1>
+  <textarea [(ngModel)]="text" rows="4" cols="50"></textarea>
+  <button (click)="analyzeText()" [disabled]="isLoading">Analyze</button>
+
+  <!-- Angular Material Slide Toggle for switch -->
+  <mat-slide-toggle [(ngModel)]="isOnline">
+    {{ isOnline ? "Online Mode Enabled" : "Use Online Mode" }}
+  </mat-slide-toggle>
+
+  <!-- Show a loading spinner when data is being processed -->
+  <div *ngIf="isLoading">Loading...</div>
+
+  <!-- Display errors if any -->
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Display analysis results -->
+  <div
+    *ngFor="let result of analysisResult; let i = index"
+    style="
+      display: flex;
+      justify-content: space-between;
+      background-color: pink;
+      border: 1px solid black;
+      padding: 10px;
+      margin-bottom: 10px;
+    "
+  >
+    <div>{{ i + 1 }}.</div>
+    <div>{{ result }}</div>
+  </div>
+</div>
