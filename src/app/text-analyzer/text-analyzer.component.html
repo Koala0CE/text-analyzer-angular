@@ -110,6 +110,7 @@
   <div
     style="
       background-color: #fce4ec;
+      width: 50vw;
       height: 35vh;
       overflow: auto;
       color: purple;
@@ -128,6 +129,22 @@
     >
       <div style="color: blanchedalmond; font-size: larger">{{ i + 1 }}.</div>
       <div>{{ result }}</div>
+    </div>
+
+    <div *ngIf="analysisHistory.length > 0">
+      <h3>Analysis History:</h3>
+      <ul>
+        <li *ngFor="let entry of analysisHistory">
+          <p><strong>Text:</strong> {{ entry.text }}</p>
+          <p>
+            <strong>Mode:</strong>
+            {{ entry.isVowels ? "Vowels" : "Consonants" }}
+          </p>
+          <p><strong>Result:</strong></p>
+          <pre>{{ entry.result }}</pre>
+          <mat-divider></mat-divider>
+        </li>
+      </ul>
     </div>
   </div>
 </div>
