@@ -11,36 +11,36 @@ export class TextAnalyzerService {
   constructor(private http: HttpClient) {}
 
   // Method to analyze text offline
-  analyzeTextOffline(text: string): string {
+  analyzeTextOffline(text: string, analyzeVowels: boolean): string {
     const vowels = 'aeiouAEIOU';
     const consonants = 'bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
 
-    const vowelCounts = this.countCharacters(text, vowels);
-    const consonantCounts = this.countCharacters(text, consonants);
+    const characterSet = analyzeVowels ? vowels : consonants;
+    const counts = this.countCharacters(text, characterSet);
 
     // Format results
-    const vowelResults = Object.entries(vowelCounts)
+    const results = Object.entries(counts)
       .map(([char, count]) => `Letter '${char}' appears ${count} times`)
       .join('\n');
 
-    const consonantResults = Object.entries(consonantCounts)
-      .map(([char, count]) => `Letter '${char}' appears ${count} times`)
-      .join('\n');
-
-    return `Offline Analysis:\n\n${vowelResults}\n\n${consonantResults}`;
+    return `Offline Analysis:\n\n${results}`;
   }
 
   // Method to analyze text online using the backend API
-  analyzeTextOnline(text: string): Observable<string> {
-    return this.http.post<any>(this.apiUrl, { text }).pipe(
+  analyzeTextOnline(text: string, isVowels: boolean): Observable<string> {
+    // Encode parameters to avoid issues with special characters
+    const encodedText = encodeURIComponent(text);
+    const url = `${this.apiUrl}?text=${encodedText}&isVowels=${isVowels}`;
+
+    return this.http.get<any>(url).pipe(
       catchError(this.handleError),
       map((response) => {
         // Convert the response object to a string
         if (typeof response === 'object') {
-          // Assuming response has a 'message' property or similar
-          return `Online Analysis:\n\n${
-            response.message || JSON.stringify(response)
-          }`;
+          // Assuming response is in the format of a map of letters to counts
+          return `Online Analysis:\n\n${Object.entries(response)
+            .map(([char, count]) => `Letter '${char}' appears ${count} times`)
+            .join('\n')}`;
         }
         return `Online Analysis:\n\n${response}`;
       })
