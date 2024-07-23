@@ -24,9 +24,7 @@ import { MatRadioModule } from '@angular/material/radio';
     MatDividerModule,
     MatProgressBarModule,
     MatFormFieldModule,
-    FormsModule,
     MatInputModule,
-    MatButtonModule,
     MatGridListModule,
     MatRadioModule,
   ],
@@ -36,10 +34,12 @@ import { MatRadioModule } from '@angular/material/radio';
 export class TextAnalyzerComponent {
   text: string = '';
   analysisResult: string[] = [];
+  analysisHistory: Array<{ text: string; isVowels: boolean; result: string }> =
+    [];
   isLoading: boolean = false;
   isOnline: boolean = false;
   error: string | null = null;
-  isVowels: boolean = true; // Default to vowels ; true for vowels, false for consonants
+  isVowels: boolean = true; // Default to vowels; true for vowels, false for consonants
 
   constructor(private textAnalyzerService: TextAnalyzerService) {}
 
@@ -47,24 +47,54 @@ export class TextAnalyzerComponent {
     this.isLoading = true;
     this.error = null;
 
-    // Log the data being sent to the backend
-    console.log('Sending data to backend:', {
-      text: this.text,
-      isVowels: this.isVowels,
-    });
+    // Log the data being sent to the backend or being processed offline
+    if (this.isOnline) {
+      // console.log('Sending data to backend:', {
+      //   text: this.text,
+      //   isVowels: this.isVowels,
+      // });
 
-    this.textAnalyzerService
-      .analyzeTextOnline(this.text, this.isVowels)
-      .subscribe({
-        next: (result) => {
-          // Split result into lines for display
-          this.analysisResult = result.split('\n');
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.error = err;
-          this.isLoading = false;
-        },
+      this.textAnalyzerService
+        .analyzeTextOnline(this.text, this.isVowels)
+        .subscribe({
+          next: (result) => {
+            // Split result into lines for display
+            this.analysisResult = result.split('\n');
+            this.isLoading = false;
+
+            // Save the result in history
+            this.analysisHistory.push({
+              text: this.text,
+              isVowels: this.isVowels,
+              result: result,
+            });
+          },
+          error: (err) => {
+            this.error = err;
+            this.isLoading = false;
+          },
+        });
+    } else {
+      console.log('Processing data offline:', {
+        text: this.text,
+        isVowels: this.isVowels,
       });
+
+      // Perform offline analysis
+      const result = this.textAnalyzerService.analyzeTextOffline(
+        this.text,
+        this.isVowels
+      );
+      this.analysisResult = result.split('\n');
+      this.isLoading = false;
+
+      // Save the result in history
+      this.analysisHistory.push({
+        text: this.text,
+        isVowels: this.isVowels,
+        result: result,
+      });
+      // console.log('Updated history:', this.analysisHistory);
+    }
   }
 }
