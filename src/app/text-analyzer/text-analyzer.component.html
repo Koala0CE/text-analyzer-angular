@@ -56,6 +56,22 @@
         >
       </mat-slide-toggle>
     </div>
+
+    <!-- Radio buttons for selecting analysis type -->
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #47008f;
+      "
+    >
+      <mat-radio-group [(ngModel)]="isVowels">
+        <mat-radio-button value="true">Vowels</mat-radio-button>
+        <mat-radio-button value="false">Consonants</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
     <!-- Text input -->
     <div style="width: 100%; max-height: 100%">
       <mat-form-field style="min-width: 100%; max-height: 20vh">
