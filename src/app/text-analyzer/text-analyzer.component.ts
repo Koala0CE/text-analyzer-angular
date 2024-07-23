@@ -32,28 +32,35 @@ import { MatRadioModule } from '@angular/material/radio';
   styleUrls: ['./text-analyzer.component.scss'],
 })
 export class TextAnalyzerComponent {
+  // The text input to be analyzed
   text: string = '';
+  // The result of the analysis
   analysisResult: string[] = [];
+  // The history of all analyses performed
   analysisHistory: Array<{ text: string; isVowels: boolean; result: string }> =
     [];
+  // Loading state to show progress indicator
   isLoading: boolean = false;
+  // Flag to toggle between online and offline mode
   isOnline: boolean = false;
+  // Error message if an error occurs
   error: string | null = null;
+  // Flag to determine whether to analyze vowels or consonants
   isVowels: boolean = true; // Default to vowels; true for vowels, false for consonants
 
   constructor(private textAnalyzerService: TextAnalyzerService) {}
 
+  /**
+   * Analyzes the text either online or offline based on the isOnline flag.
+   * If online, sends a request to the backend API. If offline, processes the text locally.
+   */
   analyzeText(): void {
-    this.isLoading = true;
-    this.error = null;
+    this.isLoading = true; // Show loading indicator
+    this.error = null; // Reset any previous errors
 
-    // Log the data being sent to the backend or being processed offline
+    // Check if analysis should be performed online
     if (this.isOnline) {
-      // console.log('Sending data to backend:', {
-      //   text: this.text,
-      //   isVowels: this.isVowels,
-      // });
-
+      // Perform online analysis by calling the service method
       this.textAnalyzerService
         .analyzeTextOnline(this.text, this.isVowels)
         .subscribe({
@@ -70,23 +77,25 @@ export class TextAnalyzerComponent {
             });
           },
           error: (err) => {
+            // Handle errors
             this.error = err;
-            this.isLoading = false;
+            this.isLoading = false; // Hide loading indicator
           },
         });
-    } else {
-      console.log('Processing data offline:', {
-        text: this.text,
-        isVowels: this.isVowels,
-      });
+      // Log the data being processed offline
+      // } else {
+      //   console.log('Processing data offline:', {
+      //     text: this.text,
+      //     isVowels: this.isVowels,
+      //   });
 
-      // Perform offline analysis
+      // Perform offline analysis by calling the service method
       const result = this.textAnalyzerService.analyzeTextOffline(
         this.text,
         this.isVowels
       );
       this.analysisResult = result.split('\n');
-      this.isLoading = false;
+      this.isLoading = false; // Hide loading indicator
 
       // Save the result in history
       this.analysisHistory.push({
@@ -94,7 +103,6 @@ export class TextAnalyzerComponent {
         isVowels: this.isVowels,
         result: result,
       });
-      // console.log('Updated history:', this.analysisHistory);
     }
   }
 }
