@@ -1,17 +1,16 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { TextAnalyzerService } from '../text-analyzer.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
   selector: 'app-text-analyzer',
@@ -29,54 +28,43 @@ import { MatGridListModule } from '@angular/material/grid-list';
     MatInputModule,
     MatButtonModule,
     MatGridListModule,
+    MatRadioModule,
   ],
   templateUrl: './text-analyzer.component.html',
   styleUrls: ['./text-analyzer.component.scss'],
 })
-export class TextAnalyzerComponent implements OnDestroy {
+export class TextAnalyzerComponent {
   text: string = '';
   analysisResult: string[] = [];
-  error: string | null = null;
+  isLoading: boolean = false;
   isOnline: boolean = false;
-  isLoading: boolean = false; // New loading state indicator
-  private subscription: Subscription = new Subscription();
+  error: string | null = null;
+  isVowels: boolean = true; // Default to vowels ; true for vowels, false for consonants
 
   constructor(private textAnalyzerService: TextAnalyzerService) {}
 
   analyzeText(): void {
-    this.isLoading = true; // Indicate loading state
-    if (this.isOnline) {
-      this.subscription.add(
-        this.textAnalyzerService.analyzeTextOnline(this.text).subscribe({
-          next: (result) => {
-            this.analysisResult = [result, ...this.analysisResult]; // Immutable update pattern
-            this.error = null;
-            this.isLoading = false; // Reset loading state
-          },
-          error: (error) => {
-            this.handleError(error);
-            this.isLoading = false; // Reset loading state
-          },
-        })
-      );
-    } else {
-      const result = this.textAnalyzerService.analyzeTextOffline(this.text);
-      this.analysisResult = [result, ...this.analysisResult]; // Immutable update pattern
-      this.error = null;
-      this.isLoading = false; // Reset loading state
-    }
-  }
+    this.isLoading = true;
+    this.error = null;
 
-  toggleMode(): void {
-    this.isOnline = !this.isOnline;
-  }
+    // Log the data being sent to the backend
+    console.log('Sending data to backend:', {
+      text: this.text,
+      isVowels: this.isVowels,
+    });
 
-  private handleError(error: string): void {
-    this.error = error;
-    this.analysisResult = []; // Clear previous results on error
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.textAnalyzerService
+      .analyzeTextOnline(this.text, this.isVowels)
+      .subscribe({
+        next: (result) => {
+          // Split result into lines for display
+          this.analysisResult = result.split('\n');
+          this.isLoading = false;
+        },
+        error: (err) => {
+          this.error = err;
+          this.isLoading = false;
+        },
+      });
   }
 }
