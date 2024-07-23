@@ -1,6 +1,20 @@
 <div class="app-container">
-  <mat-toolbar color="primary">
-    <span>{{ title }}</span>
+  <mat-toolbar>
+    <span style="color: #e0c2ff; font-weight: 500">{{
+      title | uppercase
+    }}</span>
   </mat-toolbar>
   <app-text-analyzer></app-text-analyzer>
+  <div
+    style="
+      background-color: #e0c2ff;
+      color: #47008f;
+      height: 5vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    "
+  >
+    <span>Copyright &copy; 2024 Text Analyzer</span>
+  </div>
 </div>
