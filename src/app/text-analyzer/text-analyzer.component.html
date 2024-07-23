@@ -1,79 +1,46 @@
-<div
-  style="
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    background-color: #f3e5f5;
-    width: 100%;
-    height: 90vh;
-  "
->
-  <div
-    style="
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 20vh;
-    "
-  >
-    <h1 style="color: #47008f">Text Analyzer App</h1>
-    <h5 style="color: #47008f">Enter text below to analyze it</h5>
+<div class="text-analyzer-component">
+  <div class="text-analyzer-component-child">
+    <!-- Header & Subheaders -->
+    <h1>Text Analyzer App</h1>
+    <h5>Enter text below to analyze it</h5>
 
     <!-- Show a loading spinner when data is being processed -->
-    <div style="height: 30px; width: 100%; color: purple">
-      <div style="width: 100%; height: 10px" *ngIf="isLoading">
+    <div class="text-analyzer-component-loading-spinner-container">
+      <div
+        class="text-analyzer-component-loading-spinner-container-child"
+        *ngIf="isLoading"
+      >
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         Loading...
       </div>
     </div>
   </div>
 
-  <div
-    style="
-      display: flex;
-      flex-direction: column;
-      justify-content: space-evenly;
-      align-items: center;
-      width: 50vw;
-      height: 30vh;
-    "
-  >
+  <div class="text-analyzer-component-input-group-parent">
     <!-- Angular Material Slide Toggle for switch -->
-    <div
-      style="
-        display: flex;
-        justify-content: end;
-        align-items: center;
-        width: 230px;
-        height: 50px;
-      "
-    >
+    <div class="text-analyzer-component-input-group">
       <mat-slide-toggle labelPosition="before" [(ngModel)]="isOnline">
-        <span style="color: #ff5733; background-color: #fff; font-size: 1.1rem">
+        <span class="text-analyzer-component-slide-span">
           {{ isOnline ? "Online Mode Enabled" : "Use Online Mode" }}</span
         >
       </mat-slide-toggle>
     </div>
 
     <!-- Radio buttons for selecting analysis type -->
-    <div
-      style="
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #47008f;
-      "
-    >
-      <mat-radio-group [(ngModel)]="isVowels">
-        <mat-radio-button [value]="true">Vowels</mat-radio-button>
-        <mat-radio-button [value]="false">Consonants</mat-radio-button>
+    <div class="text-analyzer-component-radio-button-parent">
+      <mat-radio-group color="warn" [(ngModel)]="isVowels">
+        <mat-radio-button [value]="true">
+          <span style="color: #ff5733"> Vowels </span>
+          Vowels</mat-radio-button
+        >
+        <mat-radio-button [value]="false">
+          <span style="color: #ff5733"> Consonants </span>
+        </mat-radio-button>
       </mat-radio-group>
     </div>
 
     <!-- Text input -->
-    <div style="width: 100%; max-height: 100%">
+    <div class="text-analyzer-component-input-field">
       <mat-form-field style="min-width: 100%; max-height: 20vh">
         <mat-label>Analyze Text</mat-label>
         <textarea
@@ -107,30 +74,15 @@
   <div *ngIf="error" class="error">{{ error }}</div>
 
   <!-- Display analysis results -->
-  <div
-    style="
-      background-color: #fce4ec;
-      width: 50vw;
-      height: 35vh;
-      overflow: auto;
-      color: purple;
-    "
-  >
+  <div class="text-analyzer-component-history">
     <div
+      class="text-analyzer-component-analyzer"
       *ngFor="let result of analysisResult; let i = index"
-      style="
-        display: flex;
-        justify-content: space-between;
-        background-color: pink;
-        border: 1px solid black;
-        padding: 10px;
-        margin-bottom: 10px;
-      "
     >
-      <div style="color: blanchedalmond; font-size: larger">{{ i + 1 }}.</div>
       <div>{{ result }}</div>
     </div>
 
+    <!-- Display analysis history -->
     <div *ngIf="analysisHistory.length > 0">
       <h3>Analysis History:</h3>
       <ul>
@@ -142,7 +94,7 @@
           </p>
           <p><strong>Result:</strong></p>
           <pre>{{ entry.result }}</pre>
-          <mat-divider></mat-divider>
+          <mat-divider style="width: 90%"></mat-divider>
         </li>
       </ul>
     </div>
