@@ -58,14 +58,13 @@ export class TextAnalyzerComponent {
     this.isLoading = true; // Show loading indicator
     this.error = null; // Reset any previous errors
 
-    // Check if analysis should be performed online
+    // Determine the analysis type based on the mode
     if (this.isOnline) {
       // Perform online analysis by calling the service method
       this.textAnalyzerService
         .analyzeTextOnline(this.text, this.isVowels)
         .subscribe({
           next: (result) => {
-            // Split result into lines for display
             this.analysisResult = result.split('\n');
             this.isLoading = false;
 
@@ -77,18 +76,11 @@ export class TextAnalyzerComponent {
             });
           },
           error: (err) => {
-            // Handle errors
             this.error = err;
             this.isLoading = false; // Hide loading indicator
           },
         });
-      // Log the data being processed offline
-      // } else {
-      //   console.log('Processing data offline:', {
-      //     text: this.text,
-      //     isVowels: this.isVowels,
-      //   });
-
+    } else {
       // Perform offline analysis by calling the service method
       const result = this.textAnalyzerService.analyzeTextOffline(
         this.text,
